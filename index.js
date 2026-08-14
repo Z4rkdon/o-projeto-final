@@ -22,7 +22,7 @@ app.post("/cliente", async (req, res) => {
         `INSERT INTO cliente(
             nome, cpf, celular, email, senha
         ) VALUES (?, ?, ?, ?, ?)`,
-        [cliente,nome, cliente.cpf, cliente.celular,
+        [cliente.nome, cliente.cpf, cliente.celular,
          cliente.email, cliente.senha]
     )
     res.status(201).json({
