@@ -7,7 +7,7 @@ CREATE TABLE cliente (
         celular CHAR(14) NOT NULL,
         senha VARCHAR(512) NOT NULL
 );
-
+}
 
 # excluir
 DROP TABLE cliente;
