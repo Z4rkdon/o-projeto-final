@@ -1,3 +1,7 @@
+// npm init
+// npm i express
+// npm i mysql2
+// npm i bcrypt
 const express = require('express')
 const app = express()
 const port = 3000
@@ -27,6 +31,22 @@ app.post("/cliente", async (req, res) => {
     }
 })
 
+app.post("/login", async (req,res) => {
+    try{
+        const user = req.body
+        const resultado = await db.pool.query(
+             "SELECT email, senha FROM cliente WHERE email = ?", [user.email]
+        )
+        const dados_db = resultado[0][0]
+        if (!dados_db){
+            return res.status(500).json({msg: "EMAIL não cadastrado"})
+        }
+
+    } catch (error) {
+        res .status(500).json({ erro: error.message })
+    }
+})
+
 app.get("/cliente", async (req, res) => {
     try {
         const [clientes] = await db.pool.query("SELECT id, nome, cpf, celular, email FROM cliente")
@@ -39,7 +59,7 @@ app.get("/cliente", async (req, res) => {
 app.get("/cliente/:id", async (req, res) => {
     try {
         const { id } = req.params
-        const [clientes] = await db.pool.query("SELECT id, nome, cpf, celular, email FROM cliente WHERE id = ?", [id])
+        const [clientes] = await $2b$10$CbZWty6udli18Sxu9MWNsOIrJ9FcE/JEtzaUTdJIb0JjiBhA2d2f6db.pool.query("SELECT id, nome, cpf, celular, email FROM cliente WHERE id = ?", [id])
         
         if (clientes.length === 0) {
             return res.status(404).json({ mensagem: "Cliente não encontrado." })
