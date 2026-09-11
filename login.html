@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Cadastro</title>
+    <style>
+        body{
+            background-color: rgb(79, 228, 99);
+        }
+        h1{
+            color: rgb(122, 22, 216);
+            text-align: center;
+            font-family: cursive;
+        }
+    </style>
+    <script>
+        function pesquisarCEP(valor) {
+    var cep = valor.replace(/\D/g, '');
+    var resposta = document.getElementById("resposta");
+
+    resposta.textContent = "";
+    document.getElementById("rua").value = "";
+    document.getElementById("cidade").value = "";
+    document.getElementById("bairro").value = "";
+    document.getElementById("estado").value = "";
+
+    if (cep.length === 8) {
+        const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherEndereco";
+        
+        var script = document.createElement("script");
+        script.src = link;
+        document.body.appendChild(script);
+    } else {
+        resposta.textContent = "CEP digitado incorretamente";
+        document.getElementById("cep").value = "";
+    }
+}
+
+function preencherEndereco(conteudo) {
+    if (!("erro" in conteudo)) {
+        document.getElementById("rua").value = conteudo.logradouro;
+        document.getElementById("cidade").value = conteudo.localidade;
+        document.getElementById("bairro").value = conteudo.bairro;
+        document.getElementById("estado").value = conteudo.uf; 
+        document.getElementById("resposta").textContent = "CEP não encontrado.";
+    }
+}
+function pegar_dados(){
+    const dados = {
+        nome: document.getElementById("nome").value,
+        cpf: document.getElementById("cpf").value,
+        datadenascimento: document.getElementById("datadenascimento").value,
+        email: document.getElementById("e-mail").value,
+        telefone: document.getElementById("telefone").value,
+        cep: document.getElementById("cep").value,
+        número: document.getElementById("número").value,
+        rua: document.getElementById("rua").value,
+        bairro: document.getElementById("bairro").value,
+        cidade: document.getElementById("cidade").value,
+        estado: document.getElementById("estado").value,
+        senha: document.getElementById("senha").value
+    }
+    return JSON.stringify(dados)
+}
+async function enviar_cadastro(){
+    const dados = pegar_dados()
+    try{
+        const resposta = await fetch("http://10.216.243.227:3001/clientes",{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: dados
+        })
+        if (!resposta.ok) { alert("Error em cadastrar") }
+        alert("Cliente cadsatrado com sucesso!!!")
+    } catch(error) { alert("Error em cadastrar!" + error.message)}
+}
+
+
+    </script>
+</head>
+<body>
+    <header>
+
+    </header>
+    <main>
+        <h1>Cadastro de Clientes</h1>
+        <form>
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="@gmail.com" required class="input_text">
+            
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" placeholder="AS3nH@!$2023" required class="input_text">
+
+            <p  style="text-align: center;">Não possui cadastro? cadastre-se <a href="index.html"> aqui </a></p>
+
+            <input type="button" value="Enviar Cadastro" class="btn_enviar" onclick="enviar_cadastro()">
+        </form>
+    </main>
+    <footer>  
+
+    </footer>
+</body>
+</html>
