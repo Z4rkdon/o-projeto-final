@@ -111,39 +111,47 @@ async function enviar_cadastro(){
             
                 <!-- CEP, Rua, Número, Bairro, Cidade, Estado(UF), Senha-->
 
-            <input type="submit" id="btn_enviar" value="Enviar Cadastro" class="btn_enviar">
-        </form>
-    </main>
-    <footer>  
+                <input type="submit" id="btn_enviar" value="Enviar Cadastro" class="btn_enviar">
+            </form>
+        </main>
+        <footer> </footer>
 
-    </footer>
-
-<script>
-function pegar_dados(){
-    const dados = {
-        nome: document.getElementById("nome").value,
-        cpf: document.getElementById("cpf").value,
-        email: document.getElementById("e-mail").value,
-        telefone: document.getElementById("telefone").value,
-        senha: document.getElementById("senha").value
-    }
-    return dados
-}
-
-const form_cadastro = document.getElementById("form_cadastro")
-const btn_enviar = document.getElementById("btn_enviar")
-form_cadastro,addEventListener("submit", async (event)=>{
-    event.preventDefault()
-    btn_enviar.disabled = true
-    btn_enviar.value = "Enviando Cadastro..."
-    const dados = pegarDados()
-    try{
-        const resposta= await fetch("http://localhost:3000/cadastrar"), {
-            method
-        }
-    }
-})
-</script>
-
-</body>
-</html>
+        <script>
+            function pegar_dados() {
+                const dados = {
+                    nome: document.getElementById("nome").value,
+                    cpf: document.getElementById("cpf").value,
+                    celular: document.getElementById("celular").value,
+                    email: document.getElementById("email").value,
+                    senha: document.getElementById("senha").value
+                }
+                return dados
+            }
+            const form = document.getElementById("form_cadastro")
+            const btn_enviar = document.getElementById("btn_enviar")
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault() 
+                btn_enviar.disabled = true
+                btn_enviar.value = "Enviando..."
+                const dados = pegar_dados()
+                try {
+                    const resposta = await fetch(
+                        "http://localhost:3000/cliente", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(dados)
+                        }
+                    )
+                    if (!resposta.ok) throw new Error("Erro na API")
+                    alert("O cadastro foi realizado!")
+                    form.reset()
+                } catch (error) {
+                    alert(error)
+                } finally {
+                    btn_enviar.disabled = false
+                    btn_enviar.value = "Enviar Cadastro"
+                }
+            })
+        </script>
+    </body>
+    </html>
