@@ -1,7 +1,7 @@
 // npm init
 // npm i express
 // npm i mysql2
-// npm i bcrypt
+
 const express = require('express')
 const app = express()
 const port = 3000
@@ -9,7 +9,20 @@ const port = 3000
 app.use(express.json())
 
 const db = require('./db')
+
+// npm i bcrypt
 const bcrypt = require('bcrypt')
+
+// npm i jsonwebtoken
+const jwt = require("jsonwebtoken")
+
+// npm i dontev
+const dotenv = require("dotenv")
+dotenv.config()
+
+// npm i cors
+const cors = require("cors")
+app.use(cors())
 
 app.post("/cliente", async (req, res) => {
     try {
@@ -39,11 +52,24 @@ app.post("/login", async (req,res) => {
         )
         const dados_db = resultado[0][0]
         if (!dados_db){
-            return res.status(500).json({msg: "EMAIL não cadastrado"})
+            return res.status(401).json({msg: "EMAIL não cadastrado"})
         }
+        
+        const senha_valida = await bcrypt.compare(user.senha, dados_db.senha)
+
+        if(user.senha != dados_db.senha){
+            return res.status(401).json({msg: "Credenciais inválidas"})
+        }
+         
+        const payload = {
+            id: dados_db.id,
+            email: dados_db.email
+        }
+        const token = jwt.sign(payload, process.env.JWT_SECRET,{expiresIn: "1m" })
+        return res.status(200).json({nome: dados_db.nome, token: token})
 
     } catch (error) {
-        res .status(500).json({ erro: error.message })
+        res.status(500).json({ erro: error.message })
     }
 })
 
