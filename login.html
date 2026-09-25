@@ -3,103 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
     <title>Cadastro</title>
     <style>
-        body{
+        body {
             background-color: rgb(79, 228, 99);
         }
-        h1{
+        h1 {
             color: rgb(122, 22, 216);
             text-align: center;
             font-family: cursive;
         }
+        main {
+            min-height: 80vh;
+            padding: 20px;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        form label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
     </style>
-    <script>
-        function pesquisarCEP(valor) {
-    var cep = valor.replace(/\D/g, '');
-    var resposta = document.getElementById("resposta");
-
-    resposta.textContent = "";
-    document.getElementById("rua").value = "";
-    document.getElementById("cidade").value = "";
-    document.getElementById("bairro").value = "";
-    document.getElementById("estado").value = "";
-
-    if (cep.length === 8) {
-        const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherEndereco";
-        
-        var script = document.createElement("script");
-        script.src = link;
-        document.body.appendChild(script);
-    } else {
-        resposta.textContent = "CEP digitado incorretamente";
-        document.getElementById("cep").value = "";
-    }
-}
-
-function preencherEndereco(conteudo) {
-    if (!("erro" in conteudo)) {
-        document.getElementById("rua").value = conteudo.logradouro;
-        document.getElementById("cidade").value = conteudo.localidade;
-        document.getElementById("bairro").value = conteudo.bairro;
-        document.getElementById("estado").value = conteudo.uf; 
-        document.getElementById("resposta").textContent = "CEP não encontrado.";
-    }
-}
-function pegar_dados(){
-    const dados = {
-        nome: document.getElementById("nome").value,
-        cpf: document.getElementById("cpf").value,
-        datadenascimento: document.getElementById("datadenascimento").value,
-        email: document.getElementById("e-mail").value,
-        telefone: document.getElementById("telefone").value,
-        cep: document.getElementById("cep").value,
-        número: document.getElementById("número").value,
-        rua: document.getElementById("rua").value,
-        bairro: document.getElementById("bairro").value,
-        cidade: document.getElementById("cidade").value,
-        estado: document.getElementById("estado").value,
-        senha: document.getElementById("senha").value
-    }
-    return JSON.stringify(dados)
-}
-async function enviar_cadastro(){
-    const dados = pegar_dados()
-    try{
-        const resposta = await fetch("http://10.216.243.227:3001/clientes",{
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: dados
-        })
-        if (!resposta.ok) { alert("Error em cadastrar") }
-        alert("Cliente cadsatrado com sucesso!!!")
-    } catch(error) { alert("Error em cadastrar!" + error.message)}
-}
-
-
-    </script>
 </head>
 <body>
     <header>
-
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid justify-content-center">
+                <a class="navbar-brand" href="#">
+                    <img src="logo.png" height="100" alt="Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse flex-grow-0 justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav text-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">PRODUTOS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="carrinho.html">CARRINHO</a>
+                        </li>
+                        <li class="nav-item" id="nav-login">
+                            <a class="nav-link" href="login.html">LOGIN</a>
+                        </li>
+                    </ul>
+                    <div class="dropdown m-3">
+                        <button id="user-info" class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: none">
+                            Opções
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="cadastro.html">Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </header>
-    <main>
-        <h1>Cadastro de Clientes</h1>
-        <form>
-            <label for="email">E-mail</label>
-            <input type="email" id="email" placeholder="@gmail.com" required class="input_text">
+
+    <main class="d-flex flex-column justify-content-center align-items-center">
+        <div class="container mt-4">
+            <h1>Cadastro de Clientes</h1>
             
-            <label for="senha">Senha</label>
-            <input type="password" id="senha" placeholder="AS3nH@!$2023" required class="input_text">
+            <form id="form_cadastro" onsubmit="event.preventDefault(); enviar_cadastro();">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" required class="form-control input_texto">
 
-            <p  style="text-align: center;">Não possui cadastro? cadastre-se <a href="index.html"> aqui </a></p>
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" required class="form-control input_texto" placeholder="000.000.000-00">
 
-            <input type="button" value="Enviar Cadastro" class="btn_enviar" onclick="enviar_cadastro()">
-        </form>
+                <label for="datadenascimento">Data de Nascimento:</label>
+                <input type="date" id="datadenascimento" required class="form-control input_texto">
+
+                <label for="telefone">Telefone:</label>
+                <input type="tel" id="telefone" required class="form-control input_texto" placeholder="(00) 00000-0000">
+
+                <label for="e-mail">E-mail:</label>
+                <input type="email" id="e-mail" required class="form-control input_texto">
+
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" required class="form-control input_texto">
+
+                <label for="cep">CEP:</label>
+                <input type="text" id="cep" required class="form-control input_texto" onblur="pesquisarCEP(this.value);" placeholder="00000-000">
+                <span id="resposta" class="text-danger small d-block mt-1"></span>
+
+                <label for="rua">Rua:</label>
+                <input type="text" id="rua" required class="form-control input_texto">
+
+                <label for="número">Número:</label>
+                <input type="text" id="número" required class="form-control input_texto">
+
+                <label for="bairro">Bairro:</label>
+                <input type="text" id="bairro" required class="form-control input_texto">
+
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" required class="form-control input_texto">
+
+                <label for="estado">Estado (UF):</label>
+                <input type="text" id="estado" required class="form-control input_texto" maxlength="2">
+
+                <p class="text-center mt-3">Já possui cadastro? Faça login <a href="login.html">aqui</a></p>
+
+                <input type="submit" value="Cadastrar" id="btn_enviar" class="btn btn-primary w-100 mt-2 btn_enviar">
+            </form>
+        </div>
     </main>
-    <footer>  
 
-    </footer>
+    <footer></footer>
+
+    <script>
+        function pesquisarCEP(valor) {
+            var cep = valor.replace(/\D/g, '');
+            var resposta = document.getElementById("resposta");
+
+            resposta.textContent = "";
+            document.getElementById("rua").value = "";
+            document.getElementById("cidade").value = "";
+            document.getElementById("bairro").value = "";
+            document.getElementById("estado").value = "";
+
+            if (cep.length === 8) {
+                const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherEndereco";
+                
+                var script = document.createElement("script");
+                script.src = link;
+                document.body.appendChild(script);
+            } else {
+                resposta.textContent = "CEP digitado incorretamente";
+                document.getElementById("cep").value = "";
+            }
+        }
+
+        function preencherEndereco(conteudo) {
+            if (!("erro" in conteudo)) {
+                document.getElementById("rua").value = conteudo.logradouro;
+                document.getElementById("cidade").value = conteudo.localidade;
+                document.getElementById("bairro").value = conteudo.bairro;
+                document.getElementById("estado").value = conteudo.uf; 
+            } else {
+                document.getElementById("resposta").textContent = "CEP não encontrado.";
+            }
+        }
+
+        function pegar_dados(){
+            const dados = {
+                nome: document.getElementById("nome").value,
+                cpf: document.getElementById("cpf").value,
+                datadenascimento: document.getElementById("datadenascimento").value,
+                email: document.getElementById("e-mail").value,
+                telefone: document.getElementById("telefone").value,
+                cep: document.getElementById("cep").value,
+                número: document.getElementById("número").value,
+                rua: document.getElementById("rua").value,
+                bairro: document.getElementById("bairro").value,
+                cidade: document.getElementById("cidade").value,
+                estado: document.getElementById("estado").value,
+                senha: document.getElementById("senha").value
+            }
+            return JSON.stringify(dados)
+        }
+
+        async function enviar_cadastro(){
+            const btn_enviar = document.getElementById("btn_enviar");
+            btn_enviar.disabled = true;
+            btn_enviar.value = "Cadastrando...";
+            
+            const dados = pegar_dados();
+            try {
+                const resposta = await fetch("http://10.216.243.227:3001/clientes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: dados
+                });
+                
+                if (!resposta.ok) { 
+                    throw new Error("Erro no servidor ao realizar cadastro.");
+                }
+                
+                alert("Cliente cadastrado com sucesso!!!");
+                window.location.href = "login.html";
+            } catch(error) { 
+                alert("Erro em cadastrar! " + error.message);
+            } finally {
+                btn_enviar.disabled = false;
+                btn_enviar.value = "Cadastrar";
+            }
+        }
+    </script>
+    
+    <script src="./pages.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
