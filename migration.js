@@ -1,4 +1,4 @@
-const bd = require("./db")
+const db = require("./db")
 
 async function criar_estrutura() {
     try{
