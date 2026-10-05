@@ -14,7 +14,7 @@ async function criar_estrutura() {
             PRIMARY KEY (id),
             UNIQUE KEY cpf (cpf),
             UNIQUE KEY email (email)
-          ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+          ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
         `)
         console.log("Migration de estrutura do BD finalizada!!!")
     } catch (error){
